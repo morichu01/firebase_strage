@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>use firebase storagez</title>
+
+</head>
+
+<body>
+    <h1>How to use firebase storage</h1>
+    <h2>Please select a upload file </h2>
+    <!-- 入力&出力場所を作成しよう -->
+    <input type="file" id="btnUpload" value="アップロード">
+
+
+
+    <h2>Show a upload file</h2>
+    <!-- <div id="imgSample" style="display:block;width:400px;height:400px;background-color:#c0c0c0;"></div> -->
+    <div id="show"></div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- 以下にfirebaseのコードを貼り付けよう -->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+         https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-analytics.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyBFnq4qPAl-OBYo9iYz7gn8LlwPdaY1XLk",
+            authDomain: "chatapp-708ad.firebaseapp.com",
+            databaseURL: "https://chatapp-708ad.firebaseio.com",
+            projectId: "chatapp-708ad",
+            // storageBucket: "chatapp-708ad.appspot.com",
+            storageBucket: "gs://xxxxxxxx.appspot.com", // ここにstorageのurlを追加
+            messagingSenderId: "517021263428",
+            appId: "1:517021263428:web:ac586a1d92b41699be7e11",
+            measurementId: "G-EBEQ0KZMHW"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+
+        // Get a reference to the storage service, which is used to create references in your storage bucket
+        // var storage = firebase.storage();
+    </script>
+
+
+    <script>
+
+        //ストレージへアップロードする
+        var btnUploadChange = function (ev) {
+            // console.log(ev);
+
+            //ストレージのルートのリファレンスを取得
+            var storageRef = firebase.storage().ref();
+
+            //ストレージへアップロードするファイルのパスを生成する
+            const f = ev.target.files[0];
+            // console.log(ev);
+
+            const filename = ev.target.files[0].name;
+            var uploadRef = storageRef.child('imgs/' + filename);
+            // console.log(f);
+
+            uploadRef.put(f).then(function (snapshot) {
+                console.log('Uploaded a blob or file!');
+                // console.log(snapshot);
+
+                //アップロードしたファイルを表示してみる
+                uploadRef.getDownloadURL().then(function (url) {
+                    console.log(uploadRef);
+                    // console.log("imgSample: " + url);
+
+                    // document.getElementById("imgSample").style.backgroundImage = "url(" + url + ")";
+
+
+                    const htmlText = `<img src="${url}">`;
+                    // console.log(htmlText);
+                    $("#show").html(htmlText);
+
+                }).catch(function (error) {
+                    // Handle any errors
+                    console.log(error);
+                });
+
+            });
+        };
+        //htmlロードが完了したらボタンにイベントを設定
+        window.onload = function () {
+            document.getElementById("btnUpload").onchange = btnUploadChange;
+            // document.getElementById("selectFile4").onchange = btnUploadChange;
+        };
+
+    </script>
+
+    <!-- <img style="-webkit-user-select: none;margin: auto;"
+        src="https://firebasestorage.googleapis.com/v0/b/chatapp-708ad.appspot.com/o/imgs%2F%5Bobject%20File%5D?alt=media&amp;token=baabb607-d1ae-408f-aa61-59aa526d8d43"> -->
+
+</body>
+
+</html>
